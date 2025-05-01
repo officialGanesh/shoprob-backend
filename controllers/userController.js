@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
+import { generateToken } from "../utils/helper.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
@@ -39,6 +40,7 @@ const registerUser = asyncHandler(async (req, res) => {
   res.status(201).json({
     message: "User registered successfully",
     user: newUser,
+    token: generateToken(newUser._id),
   });
 });
 
@@ -74,13 +76,18 @@ const loginUser = asyncHandler(async (req, res) => {
   res.status(200).json({
     message: "User logged in successfully",
     user,
+    token: generateToken(user._id),
   });
 });
 
-
 const getUser = asyncHandler(async (req, res) => {
   res.status(200).json({
-    message: "Welcome to the get user route",
+    message: "User fetched successfully",
+    user: {
+      _id: req.user._id,
+      username: req.user.username,
+      email: req.user.email,
+    },
   });
 });
 
